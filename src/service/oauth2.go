@@ -26,8 +26,8 @@ func saveAccessToken(filepath string, token *oauth2.Token) (err error) {
   
   var file *os.File
   if file, err = os.OpenFile(filepath, os.O_WRONLY | os.O_TRUNC | os.O_CREATE, 0600); err != nil {
-      return
-    }
+    return
+  }
   defer file.Close()
   
   var buffer *bytes.Buffer
@@ -44,17 +44,28 @@ func saveAccessToken(filepath string, token *oauth2.Token) (err error) {
 
 func fetchAccessToken(conf *oauth2.Config) (token *oauth2.Token, err error) {
   if conf == nil {
-    err = errors.New("OAuthr2 Config instance should't be nil")
+    err = errors.New("oauth2 config shouldn't be nil")
     return
   }
   
   authURL := conf.AuthCodeURL("stat")
-  fmt.Printf("Go to the following link in your browser: \n%s\n", authURL)
-  fmt.Printf("Enter verification code: ")
   
   var code string
-  fmt.Scanln(&code)
-  
+  if isGetCodeFromServer() {
+    if code, err = getCodeFromServer(authURL); err != nil {
+      return nil, err
+    }
+  } else if code, err = getCodeFromConsole(authURL); err != nil {
+    return nil, err
+  }
+
   token, err = conf.Exchange(code)
+  return
+}
+
+func getCodeFromConsole(authURL string) (code string, err error) {
+  fmt.Printf("Go to the following link in your browser: \n%s\n", authURL)
+  fmt.Println("Please enter your code")
+  fmt.Scanln(&code)
   return
 }

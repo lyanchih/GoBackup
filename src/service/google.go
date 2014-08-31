@@ -61,6 +61,7 @@ func (*googleService) Type() (ServiceType) {
 }
 
 func (svc *googleService) Authorize() (err error) {
+  var opts *oauth2.Options
   var conf *oauth2.Config
   if file, err := os.Open(svc.Type().optionsFilePath()); err != nil {
     return err
@@ -71,7 +72,7 @@ func (svc *googleService) Authorize() (err error) {
     if err = json.NewDecoder(file).Decode(&googleOpts); err != nil {
       return err
     }
-    if opts, err := googleOpts.toOAuth2Options(); err != nil {
+    if opts, err = googleOpts.toOAuth2Options(); err != nil {
       return err
     } else {
       if conf, err = oauth2.NewConfig(opts, uriGoogleAuth, uriGoogleToken); err != nil {

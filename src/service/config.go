@@ -1,9 +1,11 @@
 package service
 
 import (
+  "os"
   "fmt"
   "path"
   "time"
+  "strconv"
 )
 
 const (
@@ -13,6 +15,9 @@ const (
   // Database
   defaultDatabaseOptionsFolderPath = "config"
   defaultPGFileName = "pg.json"
+  
+  // HTTP
+  defaultHTTPServerPort = 3300
   
   // Goole Drive Relative Config
   defaultGoogleOAuth2Options = "google_oauth2_options.json"
@@ -67,6 +72,26 @@ func newBackupFileName() (filename string) {
 
 func newBackupFilePath() (filepath string) {
   return path.Join(backupFolderPath(), newBackupFileName())
+}
+
+//
+// HTTP Server
+//
+
+func isGetCodeFromServer() (res bool) {
+  switch os.Getenv("FetchCode") {
+  case "server": res = true
+  case "cosole": res = false
+  default:
+    if isFg, err := isForeground(); err == nil && !isFg {
+      res = true
+    }
+  }
+  return
+}
+
+func httpServerPort() (port string) {
+  return strconv.Itoa(defaultHTTPServerPort)
 }
 
 //

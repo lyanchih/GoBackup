@@ -26,7 +26,11 @@ func main() {
     log.Fatal(err)
   }
   
-  if err = service.BackupDatabase(device); err != nil {
+  // if err = service.BackupDatabase(device); err != nil {
+  //   log.Fatal(err)
+  // }
+  
+  if err = service.BackupFile(device, "main.go"); err != nil {
     log.Fatal(err)
   }
 }
