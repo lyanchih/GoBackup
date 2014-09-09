@@ -48,7 +48,7 @@ func fetchAccessToken(conf *oauth2.Config) (token *oauth2.Token, err error) {
     return
   }
   
-  authURL := conf.AuthCodeURL("stat")
+  authURL := conf.AuthCodeURL("stat", "", "")
   
   var code string
   if isGetCodeFromServer() {
